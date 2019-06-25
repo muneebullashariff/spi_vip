@@ -19,8 +19,8 @@
 //
 //  ###########################################################################
 
-`ifndef _MASTER_SEQUENCER_
-`define _MASTER_SEQUENCER_
+`ifndef _MASTER_SEQUENCER_INCLUDED_
+`define _MASTER_SEQUENCER_INCLUDED_
 
 
 //-----------------------------------------------------------------------------
@@ -28,15 +28,15 @@
 //------------------------------------------------------------------------------
 class master_sequencer extends uvm_sequencer #(master_xtn);
 
-/*register with factory so can use create uvm_method and override in
-	future if necessary*/ 
+//register with factory so can use create uvm_method and 
+//override in future if necessary 
  `uvm_component_utils(master_sequencer)
 
 
-   //---------------------------------------------
-  // Externally defined tasks and functions
-  //---------------------------------------------
-  extern function new(string name = "master_sequencer", uvm_component parent); 
+//---------------------------------------------
+// Externally defined tasks and functions
+//---------------------------------------------
+extern function new(string name = "master_sequencer", uvm_component parent); 
 endclass: master_sequencer
 
 //-----------------------------------------------------------------------------
