@@ -42,7 +42,7 @@ class slave_agent extends uvm_agent;
 
 
   
-   //---------------------------------------------
+  //---------------------------------------------
   // Externally defined tasks and functions
   //---------------------------------------------
   extern function new(string name="slave_agent", uvm_component parent); 
