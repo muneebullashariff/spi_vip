@@ -26,13 +26,14 @@
 //-----------------------------------------------------------------------------
 // Class: master_agent
 // Description of the class.
-/*agent is container called universal verification component that contain driver,
-	monitor,sequencer*/
-//------------------------------------------------------------------------------
+//agent is container called universal verification component that
+//contain driver,monitor,sequencer
+//-----------------------------------------------------------------------------
 class master_agent extends uvm_agent;
 
-/*register with factory so can use create uvm_method and override in
-	future if necessary*/ 
+//register with factory so can use create uvm_method and 
+//override in future if necessary
+	
  `uvm_component_utils(master_agent)
 
 //declaring handle for master config class,master driver
@@ -43,12 +44,12 @@ class master_agent extends uvm_agent;
  master_monitor  m_mon;
  master_sequencer m_seqr;
 
-   //---------------------------------------------
-  // Externally defined tasks and functions
-  //---------------------------------------------
-  extern function new(string name = "master_agent", uvm_component parent); 
-  extern function void build_phase(uvm_phase phase);
-  extern function void connect_phase(uvm_phase phase);
+//---------------------------------------------
+// Externally defined tasks and functions
+//---------------------------------------------
+extern function new(string name = "master_agent", uvm_component parent); 
+extern function void build_phase(uvm_phase phase);
+extern function void connect_phase(uvm_phase phase);
 
 endclass: master_agent
 
@@ -76,14 +77,15 @@ function void master_agent::build_phase(uvm_phase phase);
 
   
       if(!uvm_config_db #(master_agent_config)::get(this,"","master_agent_config",m_cfg))
+	 begin
 	`uvm_fatal("TB CONFIG","cannot get() m_cfg from uvm_config");
+	 end
+//creating master monitor
+   m_mon=master_monitor::type_id::create("m_mon",this);
+   m_cfg=new();
 
- //creating master monitor
-      m_mon=master_monitor::type_id::create("m_mon",this);
-       m_cfg=new();
-
-/*If the master agent is made active in master_configuration class create
-	driver and sequencer*/
+//If the master agent is made active in master_configuration 
+//class create driver and sequencer
  if(m_cfg.is_active==UVM_ACTIVE)
   begin
    m_drv=master_driver::type_id::create("m_drv",this);
