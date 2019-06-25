@@ -19,8 +19,8 @@
 //
 //  ###########################################################################
 
-`ifndef _MASTER_AGENT_
-`define _MASTER_AGENT_
+`ifndef _MASTER_AGENT_INCLUDED_
+`define _MASTER_AGENT_INCLUDED_
 
 
 //-----------------------------------------------------------------------------
