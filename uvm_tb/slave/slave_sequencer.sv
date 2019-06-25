@@ -19,8 +19,8 @@
 //
 //  ###########################################################################
 
-`ifndef _SLAVE_SEQUENCER_
-`define _SLAVE_SEQUENCER_
+`ifndef _SLAVE_SEQUENCER_INCLUDE
+`define _SLAVE_SEQUENCER_INCLUDE
 
 
 //-----------------------------------------------------------------------------
