@@ -19,8 +19,8 @@
 //
 //  ###########################################################################
 
-`ifndef _SLAVE_SEQUENCE_
-`define _SLAVE_SEQUENCE_
+`ifndef _SLAVE_SEQUENCE_INCLUDE
+`define _SLAVE_SEQUENCE_INCLUDE
 
 
 //-----------------------------------------------------------------------------
@@ -28,8 +28,8 @@
 //------------------------------------------------------------------------------
 class slave_sequence extends uvm_sequence #(slave_xtn);
 
-/*register with factory so can use create uvm_method and override in
-	future if necessary*/ 
+//register with factory so can use create uvm_method and override in
+//	future if necessary
  `uvm_object_utils(slave_sequence)
 
 
