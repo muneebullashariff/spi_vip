@@ -33,8 +33,12 @@
 //-----------------------------------------------------------------------------
 class base_test extends uvm_test;
 
-  `uvm_component_utils(test)
-  
+//register with factory so we can use create uvm method 
+//and can be overridden in future if necessary
+
+`uvm_component_utils(base_test)
+
+//declaring handles for env, env_config, master and slave agent config
   env envh;
   env_config e_cfg;
   master_agent_config m_cfg[];
