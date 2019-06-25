@@ -19,22 +19,22 @@
 //
 //  ###########################################################################
 
-`ifndef _MASTER_MONITOR_
-`define _MASTER_MONITOR_
+`ifndef _MASTER_MONITOR_INCLUDED_
+`define _MASTER_MONITOR_INCLUDED_
 
 
 //-----------------------------------------------------------------------------
 // Class: master_monitor
 // Description of the class.
-/*Monitor is written by extending uvm_monitor,uvm_monitor is inherited from uvm_component, 
-	A monitor is a passive entity that samples the DUT signals through virtual interface and 
-	converts the signal level activity to transaction level,monitor samples DUT signals but does not drive them.
-	Monitor should have analysis port (TLM port) and virtual interface handle that points to DUT signals*/
+//Monitor is written by extending uvm_monitor,uvm_monitor is inherited from uvm_component, 
+//A monitor is a passive entity that samples the DUT signals through virtual interface and 
+//converts the signal level activity to transaction level,monitor samples DUT signals but does not drive them.
+//Monitor should have analysis port (TLM port) and virtual interface handle that points to DUT signals
 //------------------------------------------------------------------------------
 class master_monitor extends uvm_monitor;
 
-/*register with factory so can use create uvm_method and override in
-	future if necessary*/ 
+//register with factory so can use create uvm_method and
+//override in future if necessary
  `uvm_component_utils(master_monitor)
 
 //declaring handle for master config class 
@@ -76,12 +76,14 @@ endfunction: new
 //  phase - stores the current phase 
 //-----------------------------------------------------------------------------
 function void master_monitor::build_phase(uvm_phase phase);
+   
+	super.build_phase(phase);
 
-    super.build_phase(phase);
-
-  
-      if(!uvm_config_db #(master_agent_config)::get(this,"","master_agent_config",m_cfg))
-	`uvm_fatal("TB CONFIG","cannot get() m_cfg from uvm_config");
+ if(!uvm_config_db #(master_agent_config)::get(this,"","master_agent_config",m_cfg)) 
+   begin	     
+   `uvm_fatal("TB CONFIG","cannot get() m_cfg from uvm_config");
+   end
+	   
  
 endfunction: build_phase
 
