@@ -19,8 +19,8 @@
 //
 //  ###########################################################################
 
-`ifndef _SLAVE_AGENT_
-`define _SLAVE_AGENT_
+`ifndef _SLAVE_AGENT_INCLUDED
+`define _SLAVE_AGENT_INCLUDED
 
 
 
@@ -76,8 +76,9 @@ function void slave_agent::build_phase(uvm_phase phase);
   super.build_phase(phase);
            
          if(!uvm_config_db #(slave_agent_config)::get(this,"","slave_agent_config",s_cfg))
+		 begin
            `uvm_fatal("config","cannotget()s_cfg from uvm_config_db.have you set it?.")
-  
+		 end 
        s_mon=slave_monitor::type_id::create("s_mon",this);
   s_cfg = new();
 	if(s_cfg.is_active==UVM_ACTIVE)
