@@ -20,8 +20,8 @@
 //
 //  ###########################################################################
 
-`ifndef _SLAVE_DRIVER_
-`define _SLAVE_DRIVER_
+`ifndef _SLAVE_DRIVER_INCLUDED
+`define _SLAVE_DRIVER_INCLUDED
 
 
 
@@ -75,13 +75,13 @@ function void slave_driver::build_phase(uvm_phase phase);
   super.build_phase(phase);
 
         if(!uvm_config_db #(slave_agent_config)::get(this,"","slave_agent_config",s_cfg))
-
+		begin
 	 `uvm_fatal("CONFIG","Cannot get() s_cfg fron uvm_config_db. have you set it?")
-
+		end
 
 
  endfunction: build_phase
-/*//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 // Function: connect_phase
 // Creates the required ports
 //
@@ -89,7 +89,7 @@ function void slave_driver::build_phase(uvm_phase phase);
 //  phase - stores the current phase 
 //-----------------------------------------------------------------------------
 
-function void slave_drv::connect_phase(uvm_phase phase);
+/*function void slave_drv::connect_phase(uvm_phase phase);
 	vif=s_cfg.vif;
 endfunction
 
