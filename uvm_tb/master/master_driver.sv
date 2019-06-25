@@ -19,29 +19,29 @@
 //
 //  ###########################################################################
 
-`ifndef _MASTER_DRIVER_
-`define _MASTER_DRIVER_
+`ifndef _MASTER_DRIVER_INCLUDED_
+`define _MASTER_DRIVER_INCLUDED_
 
 
 //-----------------------------------------------------------------------------
 // Class: master_driver
 // Description of the class.
-/*Driver is written by extending uvm_driver,uvm_driver is inherited from uvm_component, 
-  Methods and TLM port (seq_item_port) are defined for communication between sequencer and driver,
-  uvm_driver is a parameterized class and it is parameterized with the type of the request 
-  sequence_item and the type of the response sequence_item*/ 
+//Driver is written by extending uvm_driver,uvm_driver is inherited from uvm_component, 
+//Methods and TLM port (seq_item_port) are defined for communication between sequencer and driver,
+//uvm_driver is a parameterized class and it is parameterized with the type of the request 
+//sequence_item and the type of the response sequence_item
 //------------------------------------------------------------------------------
 class master_driver extends uvm_driver #(master_xtn);
 
-/*register with factory so can use create uvm_method and override in
-	future if necessary*/ 
- `uvm_component_utils(master_driver)
+//register with factory so can use create uvm_method and 
+//override in future if necessary
+`uvm_component_utils(master_driver)
 
 //declaring handle for master agent config class 
 
  master_agent_config m_cfg;
 
- //---------------------------------------------
+//---------------------------------------------
 // Externally defined tasks and functions
 //---------------------------------------------
  extern function new(string name = "master_driver", uvm_component parent); 
@@ -71,7 +71,9 @@ endfunction: new
 function void master_driver::build_phase(uvm_phase phase);
   
       if(!uvm_config_db #(master_agent_config)::get(this,"","master_agent_config",m_cfg))
+	 begin     
 	`uvm_fatal("TB CONFIG","cannot get() m_cfg from uvm_config");
+	 end		 
   super.build_phase(phase);
 
 endfunction: build_phase
