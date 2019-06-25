@@ -1,4 +1,3 @@
-//1) License copy
 //  ###########################################################################
 //
 //  Licensed to the Apache Software Foundation (ASF) under one
@@ -20,47 +19,48 @@
 //
 //  ###########################################################################
 
-`ifndef _SLAVE_DRIVER_
-`define _SLAVE_DRIVER_
+`ifndef _SLAVE_AGENT_
+`define _SLAVE_AGENT_
 
 
 
 //-----------------------------------------------------------------------------
-// Class: slave_driver
+// Class: SLAVE_AGENT
 // Description of the class.
-// This class provides the conversion of transaction level to pin level
+// this class contains active components like driver sequencer and monitor
 //-----------------------------------------------------------------------------
-class slave_driver extends uvm_driver #(slave_xtn);
+class slave_agent extends uvm_agent;
 
+  `uvm_component_utils(slave_agent)
 
-  `uvm_component_utils(slave_driver)
-
-  //declaring the handles of virtual interface and slave agent config 
-   // virtual spi_if.SLAVE_DRV_MP vif;
+  //declaring handles for agent config driver monitor and sequencer
+   
   slave_agent_config s_cfg;
+  slave_driver s_drv;
+  slave_monitor s_mon;
+  slave_sequencer s_seqr;
 
+
+  
    //---------------------------------------------
   // Externally defined tasks and functions
   //---------------------------------------------
-  extern function new(string name="slave_driver", uvm_component parent); 
-  extern function void build_phase(uvm_phase phase);
- // extern virtual function void connect_phase(uvm_phase phase);
-  //extern virtual task run_phase(uvm_phase phase);
-  //extern virtual task send_to_dut(slave_txn xtn);
+  extern function new(string name="slave_agent", uvm_component parent); 
+  extern virtual function void build_phase(uvm_phase phase);
+  extern virtual function void connect_phase(uvm_phase phase);
 
-
- endclass: slave_driver
+ endclass: slave_agent
 
 
 //-----------------------------------------------------------------------------
 // Constructor: new
-// Initializes the slave_driver class component
+// Initializes the slave_mon class object
 //
 // Parameters:
-//  name - instance name of the slave_driver
+//  name - instance name of the slave_mon
 //  parent - parent under which this component is created
 //-----------------------------------------------------------------------------
-function slave_driver::new(string name="slave_driver", uvm_component parent); 
+function slave_agent::new(string name="slave_agent", uvm_component parent); 
   super.new(name,parent); 
 endfunction: new 
 
@@ -71,17 +71,22 @@ endfunction: new
 // Parameters:
 //  phase - stores the current phase 
 //-----------------------------------------------------------------------------
-function void slave_driver::build_phase(uvm_phase phase);
+function void slave_agent::build_phase(uvm_phase phase);
+ 
   super.build_phase(phase);
-
-        if(!uvm_config_db #(slave_agent_config)::get(this,"","slave_agent_config",s_cfg))
-
-	 `uvm_fatal("CONFIG","Cannot get() s_cfg fron uvm_config_db. have you set it?")
-
-
-
- endfunction: build_phase
-/*//-----------------------------------------------------------------------------
+           
+         if(!uvm_config_db #(slave_agent_config)::get(this,"","slave_agent_config",s_cfg))
+           `uvm_fatal("config","cannotget()s_cfg from uvm_config_db.have you set it?.")
+  
+       s_mon=slave_monitor::type_id::create("s_mon",this);
+  s_cfg = new();
+	if(s_cfg.is_active==UVM_ACTIVE)
+	begin
+	s_drv=slave_driver::type_id::create("s_drv",this);
+	s_seqr=slave_sequencer::type_id::create("s_seqr",this);
+        end
+ endfunction: build_phase  
+//-----------------------------------------------------------------------------
 // Function: connect_phase
 // Creates the required ports
 //
@@ -89,40 +94,12 @@ function void slave_driver::build_phase(uvm_phase phase);
 //  phase - stores the current phase 
 //-----------------------------------------------------------------------------
 
-function void slave_drv::connect_phase(uvm_phase phase);
-	vif=s_cfg.vif;
+function void slave_agent::connect_phase(uvm_phase phase);
+	if(s_cfg.is_active==UVM_ACTIVE)
+     begin
+	s_drv.seq_item_port.connect(s_seqr.seq_item_export);
+      end
 endfunction
 
-//-----------------------------------------------------------------------------
-// Task: run_phase
-// Waits for reset and initiates the main montoring task 
-//
-// Parameters:
-//  phase - stores the current phase 
-//-----------------------------------------------------------------------------
-task slave_drv::run_phase(uvm_phase phase);
-  forever
-  	begin
-  seq_item_port.get_next_item(req);
-  		send_to_dut(req);
-  seq_item_port.item_done();
-
- endtask: run_phase
-
-//-----------------------------------------------------------------------------
-// Task: send_to_dut
-// Parameters:
-//  phase - stores the current phase 
-//-----------------------------------------------------------------------------
-
-task slave_drv::send_to_dut(slave_txn xtn)
-
-
-`uvm_info("SLAVE_DRIVER",$sformatf("printing from driver \n %s", xtn.sprint()),UVM_LOW) 
-
-		endtask
-
-
-    
-//4) Close of Include guard*/
+//4) Close of Include guard
 `endif

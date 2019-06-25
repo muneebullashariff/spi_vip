@@ -19,40 +19,40 @@
 //
 //  ###########################################################################
 
-`ifndef _SLAVE_SEQUENCER_
-`define _SLAVE_SEQUENCER_
+`ifndef _SLAVE_AGENT_CONFIG_
+`define _SLAVE_AGENT_CONFIG_
 
 
 //-----------------------------------------------------------------------------
-// Class: SLAVE_SEQUENCER
+// Class: SLAVE_AGENT_CONFIG
 // Description of the class.
-// This class sends transaction from sequence to driver through tlm ports
-
+// this class is used to get env_config and set the agent config
 //-----------------------------------------------------------------------------
-   class slave_sequencer extends uvm_sequencer #(slave_xtn);
+class slave_agent_config extends uvm_object;
 
-  `uvm_component_utils(slave_sequencer)
+  `uvm_object_utils(slave_agent_config)
 
+  //declare handles for virtual interface
+   virtual spi_if vif;
 
+   uvm_active_passive_enum is_active= UVM_ACTIVE;
    //---------------------------------------------
-  // Externally defined  function
+  // Externally defined tasks and functions
   //---------------------------------------------
-  extern function new(string name="slave_sequencer", uvm_component parent);
+  extern function new(string name="slave_agent_config"); 
 
- endclass :slave_sequencer
-
+endclass:slave_agent_config
 //-----------------------------------------------------------------------------
 // Constructor: new
-// Initializes the slave_sequencer class object
+// Initializes the slave_mon class object
 //
 // Parameters:
-//  name - instance name of the slave_sequencer
+//  name - instance name of the slave_mon
 //  parent - parent under which this component is created
 //-----------------------------------------------------------------------------
-function slave_sequencer::new(string name="slave_sequencer", uvm_component parent); 
-  super.new(name,parent); 
-endfunction:new 
+function slave_agent_config::new(string name="slave_agent_config"); 
+  super.new(name); 
+endfunction: new 
 
-	// Close of Include guard
+//4) Close of Include guard
 `endif
-
