@@ -19,16 +19,16 @@
 //
 //  ###########################################################################
 
-`ifndef _ENV_
-`define _ENV_
+`ifndef _ENV_INCLUDED_
+`define _ENV_INCLUDED_
 
 
 
 //-----------------------------------------------------------------------------
 // Class: env
- /*User-defined environment is derived from uvm_env, uvm_env is inherited from uvm_component.
-	Environment is the container class, It contains one or more agents or agent_tops,
-	as well as other components such as scoreboard,checker,virtual sequencer. */
+//User-defined environment is derived from uvm_env, uvm_env is inherited from uvm_component.
+//Environment is the container class, It contains one or more agents or agent_tops,
+//as well as other components such as scoreboard,checker,virtual sequencer. 
 //-----------------------------------------------------------------------------
 class env extends uvm_env;
 
@@ -46,8 +46,8 @@ class env extends uvm_env;
   //---------------------------------------------
   extern function new(string name = "env", uvm_component parent); 
   extern virtual function void build_phase(uvm_phase phase);
-// extern task run_phase(uvm_phase phase);
-endclass: env
+  // extern task run_phase(uvm_phase phase);
+  endclass: env
 
 //-----------------------------------------------------------------------------
 // Constructor: new
@@ -73,10 +73,15 @@ if(!uvm_config_db #(env_config)::get(this,"","env_config",e_cfg))
 
   super.build_phase(phase);
 
-  if(e_cfg.has_mtop == 1)
-    mtop = master_agent_top::type_id::create("mtop",this);
- if(e_cfg.has_stop == 1)
-    stop = slave_agent_top::type_id::create("stop",this);
+	if(e_cfg.has_mtop == 1) 
+	begin
+        mtop = master_agent_top::type_id::create("mtop",this);
+	end
+	
+        if(e_cfg.has_stop == 1)
+	begin
+        stop = slave_agent_top::type_id::create("stop",this);
+	end
 endfunction
 /*//run_phase
  task env::run_phase(uvm_phase phase);
