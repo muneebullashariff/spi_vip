@@ -19,19 +19,19 @@
 //
 //  ###########################################################################
 
-`ifndef _TEST_
-`define _TEST_
+`ifndef _BASE_TEST_INCLUDED_
+`define _BASE_TEST_INCLUDED_
 
 
 
 //-----------------------------------------------------------------------------
-// Class: test
- /*User-defined test is derived from uvm_test, uvm_test is inherited from uvm_component.
-	Test defines the test scenario for the testbench,test class contains the environment, 
-	configuration properties, class overrides etc.
-	A sequence/sequences are created and started in the test*/
+// Class: base_test
+//User-defined test is derived from uvm_test, uvm_test is inherited from uvm_component.
+//Test defines the test scenario for the testbench,test class contains the environment, 
+//configuration properties, class overrides etc.
+//A sequence/sequences are created and started in the test
 //-----------------------------------------------------------------------------
-class test extends uvm_test;
+class base_test extends uvm_test;
 
   `uvm_component_utils(test)
   
@@ -73,30 +73,25 @@ function void test::configuration();
  
  if(has_m_agt)
   begin
-
      m_cfg = new[no_of_magent];
      foreach(m_cfg[i])
-       begin
+      begin
          m_cfg[i] = master_agent_config::type_id::create($sformatf("m_cfg[%0d]",i));
-
-       end
-     end
+      end
+   end
 
     
   if(has_s_agt)
   begin
-
      s_cfg = new[no_of_sagent];
      foreach(s_cfg[i])
        begin
          s_cfg[i] = slave_agent_config::type_id::create($sformatf("s_cfg[%0d]",i));
-
        end
-     end
+   end
 		
         e_cfg.no_of_magent = no_of_magent;
-        e_cfg.no_of_sagent = no_of_sagent;
-									 
+        e_cfg.no_of_sagent = no_of_sagent;	 
         e_cfg.has_m_agt = has_m_agt;
         e_cfg.has_s_agt = has_s_agt;
   endfunction 
@@ -112,12 +107,12 @@ function void test::configuration();
 function void test::build_phase(uvm_phase phase);
  e_cfg = env_config::type_id::create("e_cfg");
 
- 	if(has_m_agt)
+	if(has_m_agt) begin
        		e_cfg.m_cfg = new[no_of_magent];
-          
-	if(has_s_agt)
+	end
+	if(has_s_agt) begin
 		e_cfg.s_cfg = new[no_of_sagent];
-	
+	end
 	configuration();
 	uvm_config_db #(env_config)::set(this,"*","env_config",e_cfg);
     	super.build();
