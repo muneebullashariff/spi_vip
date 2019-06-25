@@ -19,8 +19,8 @@
 //
 //  ###########################################################################
 
-`ifndef _SLAVE_AGENT_CONFIG_
-`define _SLAVE_AGENT_CONFIG_
+`ifndef _SLAVE_AGENT_CONFIG_INCLUDED
+`define _SLAVE_AGENT_CONFIG_INCLUDED
 
 
 //-----------------------------------------------------------------------------
