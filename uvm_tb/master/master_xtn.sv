@@ -21,13 +21,8 @@
 //  ###########################################################################
 
 
-`ifndef _MASTER_XTN_
-`define _MASTER_XTN_
-
-
-
-
-
+`ifndef _MASTER_XTN_INCLUDED_
+`define _MASTER_XTN_INCLUDED_
 
 
 //-----------------------------------------------------------------------------
@@ -38,15 +33,16 @@
 //-----------------------------------------------------------------------------
 class master_xtn extends uvm_sequence_item;
 
-//register with factory so that we can use create uvm method and override in future if necessary
+//register with factory so that we can use create uvm method
+//and override in future if necessary
   `uvm_object_utils(master_xtn)
 
  
-  //---------------------------------------------
-  // Externally defined tasks and functions
-  //---------------------------------------------
-  extern function new(string name="master_xtn"); 
-  extern function void do_print(uvm_printer printer);
+//---------------------------------------------
+// Externally defined tasks and functions
+//---------------------------------------------
+extern function new(string name="master_xtn"); 
+extern function void do_print(uvm_printer printer);
 endclass:master_xtn
 
 //-----------------------------------------------------------------------------
