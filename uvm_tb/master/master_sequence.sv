@@ -19,8 +19,8 @@
 //
 //  ###########################################################################
 
-`ifndef _MASTER_SEQUENCE_
-`define _MASTER_SEQUENCE_
+`ifndef _MASTER_SEQUENCE_INCLUDED_
+`define _MASTER_SEQUENCE_INCLUDED_
 
 
 //-----------------------------------------------------------------------------
@@ -28,15 +28,14 @@
 //------------------------------------------------------------------------------
 class master_sequence extends uvm_sequence #(master_xtn);
 
-/*register with factory so can use create uvm_method and override in
-	future if necessary*/ 
+//register with factory so can use create uvm_method and 
+//override in future if necessary 
  `uvm_object_utils(master_sequence)
 
-
-   //---------------------------------------------
-  // Externally defined tasks and functions
-  //---------------------------------------------
-  extern function new(string name = "master_sequence"); 
+//---------------------------------------------
+// Externally defined tasks and functions
+//---------------------------------------------
+ extern function new(string name = "master_sequence"); 
 endclass: master_sequence
 
 //-----------------------------------------------------------------------------
