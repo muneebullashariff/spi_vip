@@ -19,8 +19,8 @@
 //
 //  ###########################################################################
 
-`ifndef _SLAVE_AGENT_TOP_
-`define _SLAVE_AGENT_TOP_
+`ifndef _SLAVE_AGENT_TOP_INCLUDED
+`define _SLAVE_AGENT_TOP_INCLUDED
 
 
 
@@ -72,8 +72,9 @@ function void slave_agent_top::build_phase(uvm_phase phase);
   super.build_phase(phase);
 
              if(!uvm_config_db #(env_config)::get(this,"","env_config",e_cfg))
+		     begin
             `uvm_fatal("config","cannotget()e_cfg from uvm_config_db.have you set it?.")
-
+		     end
        s_agt =new[e_cfg.no_of_sagent];
 
    foreach(s_agt[i])
