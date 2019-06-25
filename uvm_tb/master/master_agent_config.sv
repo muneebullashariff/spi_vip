@@ -19,8 +19,8 @@
 //
 //  ###########################################################################
 
-`ifndef _MASTER_AGENT_CONFIG_
-`define _MASTER_AGENT_CONFIG_
+`ifndef _MASTER_AGENT_CONFIG_INCLUDED_
+`define _MASTER_AGENT_CONFIG_INCLUDED_
 
 
 //-----------------------------------------------------------------------------
@@ -30,18 +30,17 @@
 //------------------------------------------------------------------------------
 class master_agent_config extends uvm_object;
 
-/*register with factory so can use create uvm_method and override in
-	future if necessary*/ 
- `uvm_object_utils(master_agent_config)
+//register with factory so can use create uvm_method and
+//override in future if necessary
+`uvm_object_utils(master_agent_config)
 
 //declaring agent is active or passive
-   uvm_active_passive_enum is_active=UVM_ACTIVE;
+uvm_active_passive_enum is_active=UVM_ACTIVE;
 
-
- //---------------------------------------------
- // Externally defined tasks and functions
- //---------------------------------------------
-  extern function new(string name = "master_agent_config"); 
+//---------------------------------------------
+// Externally defined tasks and functions
+//---------------------------------------------
+ extern function new(string name = "master_agent_config"); 
 endclass: master_agent_config
 
 //-----------------------------------------------------------------------------
