@@ -19,8 +19,8 @@
 //
 //  ###########################################################################
 
-`ifndef _SLAVE_SEQUENCER_INCLUDE
-`define _SLAVE_SEQUENCER_INCLUDE
+`ifndef _SLAVE_SEQUENCER_INCLUDED_
+`define _SLAVE_SEQUENCER_INCLUDED_
 
 
 //-----------------------------------------------------------------------------
@@ -31,15 +31,19 @@
 //-----------------------------------------------------------------------------
    class slave_sequencer extends uvm_sequencer #(slave_xtn);
 
+//register with factory so can use create uvm_method
+// and override in future if necessary 
+
+
   `uvm_component_utils(slave_sequencer)
 
 
-   //---------------------------------------------
-  // Externally defined  function
-  //---------------------------------------------
-  extern function new(string name="slave_sequencer", uvm_component parent);
+//---------------------------------------------
+// Externally defined  function
+//---------------------------------------------
+extern function new(string name="slave_sequencer", uvm_component parent);
 
- endclass :slave_sequencer
+endclass :slave_sequencer
 
 //-----------------------------------------------------------------------------
 // Constructor: new
@@ -53,6 +57,6 @@ function slave_sequencer::new(string name="slave_sequencer", uvm_component paren
   super.new(name,parent); 
 endfunction:new 
 
-	// Close of Include guard
+//---------------------------------------------------------------------------------
 `endif
 

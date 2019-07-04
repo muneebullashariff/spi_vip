@@ -19,8 +19,8 @@
 //
 //  ###########################################################################
 
-`ifndef _SLAVE_SEQUENCE_INCLUDE
-`define _SLAVE_SEQUENCE_INCLUDE
+`ifndef _SLAVE_SEQUENCE_INCLUDED_
+`define _SLAVE_SEQUENCE_INCLUDED_
 
 
 //-----------------------------------------------------------------------------
@@ -28,15 +28,17 @@
 //------------------------------------------------------------------------------
 class slave_sequence extends uvm_sequence #(slave_xtn);
 
-//register with factory so can use create uvm_method and override in
-//	future if necessary
+//register with factory so can use create uvm_method
+// and override in future if necessary 
+	
  `uvm_object_utils(slave_sequence)
 
 
-   //---------------------------------------------
-  // Externally defined tasks and functions
-  //---------------------------------------------
-  extern function new(string name = "slave_sequence"); 
+//---------------------------------------------
+// Externally defined tasks and functions
+//---------------------------------------------
+extern function new(string name = "slave_sequence"); 
+
 endclass:slave_sequence
 
 //-----------------------------------------------------------------------------
@@ -49,5 +51,62 @@ endclass:slave_sequence
 function slave_sequence::new(string name="slave_sequence"); 
   super.new(name); 
 endfunction: new 
+
+//****************************************************************************
+//****************************************************************************
+//class:extended class from the base class
+
+//*****************************************************************************
+//*****************************************************************************
+
+class sseq1 extends slave_sequence;
+
+//register with factory so can use create uvm_method 
+//and override in future if necessary 
+
+ `uvm_object_utils(sseq1)
+
+
+//---------------------------------------------
+// Externally defined tasks and functions
+//---------------------------------------------
+extern function new (string name="sseq1");
+
+extern virtual task body();
+
+endclass:sseq1
+
+
+//-----------------------------------------------------------------------------
+// Constructor: new
+// Initializes the master_sequence class object
+//
+// Parameters:
+//  name - instance name of the config_template
+//-----------------------------------------------------------------------------
+function sseq1::new(string name="sseq1");
+	super.new(name);
+endfunction:new
+
+//-----------------------------------------------------------------------------
+//task:body
+//creating request which is will be coming from driver
+//-----------------------------------------------------------------------------
+task sseq1::body();
+
+	begin
+
+        req=slave_xtn::type_id::create("req");
+       	repeat(4)
+	     begin
+		start_item(req);
+		assert(req.randomize () with {cpol==0;cpha==0;data_in_miso==8'b10010010;});
+                finish_item(req);
+             
+	     end
+	end
+endtask:body
+//------------------------------------------------------------------------------
+
 
 `endif

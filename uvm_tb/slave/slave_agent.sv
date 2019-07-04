@@ -19,8 +19,8 @@
 //
 //  ###########################################################################
 
-`ifndef _SLAVE_AGENT_INCLUDED
-`define _SLAVE_AGENT_INCLUDED
+`ifndef _SLAVE_AGENT_INCLUDED_
+`define _SLAVE_AGENT_INCLUDED_
 
 
 
@@ -31,25 +31,29 @@
 //-----------------------------------------------------------------------------
 class slave_agent extends uvm_agent;
 
-  `uvm_component_utils(slave_agent)
+//register with factory so can use create uvm_method 
+//and override in future if necessary 
 
-  //declaring handles for agent config driver monitor and sequencer
+
+`uvm_component_utils(slave_agent)
+
+//declaring handles for agent config driver monitor and sequencer
    
-  slave_agent_config s_cfg;
-  slave_driver s_drv;
-  slave_monitor s_mon;
-  slave_sequencer s_seqr;
+slave_agent_config s_cfg;
+slave_driver s_drv;
+slave_monitor s_mon;
+slave_sequencer s_seqrh;
 
 
   
-  //---------------------------------------------
-  // Externally defined tasks and functions
-  //---------------------------------------------
-  extern function new(string name="slave_agent", uvm_component parent); 
-  extern virtual function void build_phase(uvm_phase phase);
-  extern virtual function void connect_phase(uvm_phase phase);
+//---------------------------------------------
+// Externally defined tasks and functions
+//---------------------------------------------
+extern function new(string name="slave_agent", uvm_component parent); 
+extern  function void build_phase(uvm_phase phase);
+extern  function void connect_phase(uvm_phase phase);
 
- endclass: slave_agent
+endclass: slave_agent
 
 
 //-----------------------------------------------------------------------------
@@ -76,17 +80,23 @@ function void slave_agent::build_phase(uvm_phase phase);
   super.build_phase(phase);
            
          if(!uvm_config_db #(slave_agent_config)::get(this,"","slave_agent_config",s_cfg))
-		 begin
+          begin
            `uvm_fatal("config","cannotget()s_cfg from uvm_config_db.have you set it?.")
-		 end 
-       s_mon=slave_monitor::type_id::create("s_mon",this);
-  s_cfg = new();
-	if(s_cfg.is_active==UVM_ACTIVE)
-	begin
-	s_drv=slave_driver::type_id::create("s_drv",this);
-	s_seqr=slave_sequencer::type_id::create("s_seqr",this);
-        end
- endfunction: build_phase  
+          end
+//creating slave monitor
+s_mon=slave_monitor::type_id::create("s_mon",this);
+      s_cfg=new();
+
+//If the master agent is made active in master_configuration
+// class create driver and sequence
+if(s_cfg.is_active==UVM_ACTIVE)
+ begin
+   s_drv=slave_driver::type_id::create("s_drv",this);
+   s_seqrh=slave_sequencer::type_id::create("s_seqrh",this);
+ end
+
+     
+endfunction: build_phase  
 //-----------------------------------------------------------------------------
 // Function: connect_phase
 // Creates the required ports
@@ -97,10 +107,9 @@ function void slave_agent::build_phase(uvm_phase phase);
 
 function void slave_agent::connect_phase(uvm_phase phase);
 	if(s_cfg.is_active==UVM_ACTIVE)
-     begin
-	s_drv.seq_item_port.connect(s_seqr.seq_item_export);
-      end
+         begin
+       	  s_drv.seq_item_port.connect(s_seqrh.seq_item_export);
+         end
 endfunction
-
-//4) Close of Include guard
+//------------------------------------------------------------------------------
 `endif

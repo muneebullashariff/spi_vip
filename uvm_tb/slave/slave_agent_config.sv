@@ -19,8 +19,8 @@
 //
 //  ###########################################################################
 
-`ifndef _SLAVE_AGENT_CONFIG_INCLUDED
-`define _SLAVE_AGENT_CONFIG_INCLUDED
+`ifndef _SLAVE_AGENT_CONFIG_INCLUDED_
+`define _SLAVE_AGENT_CONFIG_INCLUDED_
 
 
 //-----------------------------------------------------------------------------
@@ -30,18 +30,26 @@
 //-----------------------------------------------------------------------------
 class slave_agent_config extends uvm_object;
 
+//register with factory so can use create uvm_method 
+//and override in future if necessary 
   `uvm_object_utils(slave_agent_config)
 
-  //declare handles for virtual interface
+//declare handles for virtual interface
    virtual spi_if vif;
 
-   uvm_active_passive_enum is_active= UVM_ACTIVE;
-   //---------------------------------------------
-  // Externally defined tasks and functions
-  //---------------------------------------------
-  extern function new(string name="slave_agent_config"); 
+//declaring agent is active or passive
+  uvm_active_passive_enum is_active= UVM_ACTIVE;
+
+//---------------------------------------------
+// Externally defined tasks and functions
+//---------------------------------------------
+extern function new(string name="slave_agent_config"); 
 
 endclass:slave_agent_config
+
+
+
+ 
 //-----------------------------------------------------------------------------
 // Constructor: new
 // Initializes the slave_mon class object
@@ -53,6 +61,6 @@ endclass:slave_agent_config
 function slave_agent_config::new(string name="slave_agent_config"); 
   super.new(name); 
 endfunction: new 
+//-----------------------------------------------------------------------------
 
-//4) Close of Include guard
 `endif

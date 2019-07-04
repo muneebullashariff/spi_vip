@@ -20,8 +20,8 @@
 //
 //  ###########################################################################
 
-`ifndef _SLAVE_DRIVER_INCLUDED
-`define _SLAVE_DRIVER_INCLUDED
+`ifndef _SLAVE_DRIVER_INCLUDED_
+`define _SLAVE_DRIVER_INCLUDED_
 
 
 
@@ -32,24 +32,27 @@
 //-----------------------------------------------------------------------------
 class slave_driver extends uvm_driver #(slave_xtn);
 
+//register with factory so can use create uvm_method and
+// override in future if necessary 
+ `uvm_component_utils(slave_driver)
 
-  `uvm_component_utils(slave_driver)
 
-  //declaring the handles of virtual interface and slave agent config 
-   // virtual spi_if.SLAVE_DRV_MP vif;
+
+//declaring the handles of virtual interface and slave agent config 
+  virtual spi_if.SDR_MP vif;
   slave_agent_config s_cfg;
 
-   //---------------------------------------------
-  // Externally defined tasks and functions
-  //---------------------------------------------
-  extern function new(string name="slave_driver", uvm_component parent); 
-  extern function void build_phase(uvm_phase phase);
- // extern virtual function void connect_phase(uvm_phase phase);
-  //extern virtual task run_phase(uvm_phase phase);
-  //extern virtual task send_to_dut(slave_txn xtn);
+//---------------------------------------------
+// Externally defined tasks and functions
+//---------------------------------------------
+extern function new(string name="slave_driver", uvm_component parent); 
+extern function void build_phase(uvm_phase phase);
+extern function void connect_phase(uvm_phase phase);
+extern task run_phase(uvm_phase phase);
+extern task data_rec(slave_xtn xtn);
 
 
- endclass: slave_driver
+endclass: slave_driver
 
 
 //-----------------------------------------------------------------------------
@@ -75,54 +78,76 @@ function void slave_driver::build_phase(uvm_phase phase);
   super.build_phase(phase);
 
         if(!uvm_config_db #(slave_agent_config)::get(this,"","slave_agent_config",s_cfg))
-		begin
-	 `uvm_fatal("CONFIG","Cannot get() s_cfg fron uvm_config_db. have you set it?")
-		end
+         begin
 
+	 `uvm_fatal("CONFIG","Cannot get() s_cfg fron uvm_config_db. have you set it?")
+
+         end
 
  endfunction: build_phase
-//-----------------------------------------------------------------------------
-// Function: connect_phase
-// Creates the required ports
+//------------------------------------------------------------------------------
+//function:connect phase
 //
-// Parameters:
-//  phase - stores the current phase 
-//-----------------------------------------------------------------------------
+//connecting slave agent config with virtual interface 
+//------------------------------------------------------------------------------
 
-/*function void slave_drv::connect_phase(uvm_phase phase);
-	vif=s_cfg.vif;
-endfunction
+ function void slave_driver::connect_phase(uvm_phase phase);
+	 vif=s_cfg.vif;
+endfunction:connect_phase
+//------------------------------------------------------------------------------
+//task: run phase
+//getting the item from the sequence and giving acknowledgement as item done
+//to sequence
+//------------------------------------------------------------------------------
+task slave_driver::run_phase(uvm_phase phase);
+  
+     forever
+ 
+	 begin
+	   seq_item_port.get_next_item(req);
+	    data_rec(req);
+	   seq_item_port.item_done();
+	end
+endtask:run_phase
+//------------------------------------------------------------------------------
+//task: send to dut
+//converting transaction level to pin level
 
-//-----------------------------------------------------------------------------
-// Task: run_phase
-// Waits for reset and initiates the main montoring task 
-//
-// Parameters:
-//  phase - stores the current phase 
-//-----------------------------------------------------------------------------
-task slave_drv::run_phase(uvm_phase phase);
-  forever
-  	begin
-  seq_item_port.get_next_item(req);
-  		send_to_dut(req);
-  seq_item_port.item_done();
+//-------------------------------------------------------------------------------
 
- endtask: run_phase
-
-//-----------------------------------------------------------------------------
-// Task: send_to_dut
-// Parameters:
-//  phase - stores the current phase 
-//-----------------------------------------------------------------------------
-
-task slave_drv::send_to_dut(slave_txn xtn)
+task slave_driver::data_rec(slave_xtn xtn);
 
 
-`uvm_info("SLAVE_DRIVER",$sformatf("printing from driver \n %s", xtn.sprint()),UVM_LOW) 
+        @(negedge vif.sclk);
+          begin
 
-		endtask
+      for(int i=0;i<xtn.data_in_miso;i++)
+       begin
+
+          xtn.data_in_mosi[0]=vif.sdr_cb.miso;
+
+           $display("right shift operation",xtn.data_in_mosi << 1'b1);
+
+          vif.MDR_CB.mosi=xtn.data_in_miso;
+        end
+
+        //	vif.sdr_cb.miso0 <= xtn.miso0;
+         //	vif.sdr_cb.mosi0 <= xtn.mosi0;
+  
+ 	  end
 
 
-    
-//4) Close of Include guard*/
+	`uvm_info("slave_driver",$sformatf("printin from slave_driver \n %s",xtn.sprint()),UVM_LOW)
+endtask:data_rec
+//----------------------------------------------------------------------------------------
+
 `endif
+
+
+	
+
+
+	
+
+	
+

@@ -19,11 +19,11 @@
 //
 //  ###########################################################################
 
-`ifndef _SLAVE_MONITOR_
-`define _SLAVE_MONITOR_
+`ifndef _SLAVE_MONITOR_INCLUDED_
+`define _SLAVE_MONITOR_INCLUDED_
 
 
-//3) Use of comments and code as per the coding guidelines
+
 
 //-----------------------------------------------------------------------------
 // Class: SLAVE_MONITOR
@@ -34,28 +34,35 @@
 //-----------------------------------------------------------------------------
 class slave_monitor extends uvm_monitor;
 
-  `uvm_component_utils(slave_monitor)
+//register with factory so can use create uvm_method and
+// override in future if necessary 
 
-  //declaring the handles of virtual interface and slave agent config and
-  //analysis port
-   // virtual spi_if.SLAVE_MON_MP vif;
-  	slave_agent_config s_cfg;
-
-	uvm_analysis_port #(slave_xtn) monitor_port;
+ `uvm_component_utils(slave_monitor)
 
 
+//declaring the handles of virtual interface and slave agent config and
+//analysis port
+ virtual spi_if.SMON_CB vif;
+ 
+ slave_agent_config s_cfg;
 
-   //---------------------------------------------
-  // Externally defined tasks and functions
-  //---------------------------------------------
-  extern function new(string name="slave_monitor", uvm_component parent); 
-  extern virtual function void build_phase(uvm_phase phase);
-//  extern virtual function void connect_phase(uvm_phase phase);
- // extern virtual task run_phase(uvm_phase phase);
-  //extern virtual task collect_data;
+//declaring analysis port for the monitor port
+
+uvm_analysis_port #(slave_xtn) monitor_port;
 
 
- endclass: slave_monitor
+
+//---------------------------------------------
+// Externally defined tasks and functions
+//---------------------------------------------
+extern function new(string name="slave_monitor", uvm_component parent); 
+extern  function void build_phase(uvm_phase phase);
+extern  function void connect_phase(uvm_phase phase);
+extern  task run_phase(uvm_phase phase);
+extern task collect_data;
+
+
+endclass: slave_monitor
 
 
 //-----------------------------------------------------------------------------
@@ -67,9 +74,11 @@ class slave_monitor extends uvm_monitor;
 //  parent - parent under which this component is created
 //-----------------------------------------------------------------------------
 function slave_monitor::new(string name="slave_monitor", uvm_component parent); 
-  super.new(name,parent); 
-
+  super.new(name,parent);
+ 
+ //creating monitor port
  monitor_port=new("monitor_port",this);
+
 
 endfunction: new 
 
@@ -91,7 +100,7 @@ function void slave_monitor::build_phase(uvm_phase phase);
 
  
  endfunction: build_phase
-/*//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 // Function: connect_phase
 // Creates the required ports
 //
@@ -99,9 +108,9 @@ function void slave_monitor::build_phase(uvm_phase phase);
 //  phase - stores the current phase 
 //-----------------------------------------------------------------------------
 
-function void slave_mon::connect_phase(uvm_phase phase);
+function void slave_monitor::connect_phase(uvm_phase phase);
 	vif=s_cfg.vif;
-endfunction
+endfunction:connect_phase
 
 //-----------------------------------------------------------------------------
 // Task: run_phase
@@ -110,27 +119,55 @@ endfunction
 // Parameters:
 //  phase - stores the current phase 
 //-----------------------------------------------------------------------------
-task slave_drv::run_phase(uvm_phase phase);
+task slave_monitor::run_phase(uvm_phase phase);
   forever
   	begin
-  collect_data();
- endtask: run_phase
-
+         collect_data();
+        end
+ endtask:run_phase 
 //-----------------------------------------------------------------------------
 // Task: send_to_dut
 // Parameters:
 //  phase - stores the current phase 
 //-----------------------------------------------------------------------------
 
-task slave_mon::collect_data;
+task slave_monitor::collect_data;
+
+    slave_xtn data_sent;
+  
+   data_sent=slave_xtn::type_id::create("data_sent");
+
+         
+ fork
+      begin
+     /*  @(vif.smon_cb);
+
+         data_sent.sclk = vif.smon_cb.sclk;
+         data_sent.ss = vif.smon_cb.ss;
+        
+         data_sent.mosi0 = vif.smon_cb.mosi0;
+         data_sent.mosi1 = vif.smon_cb.mosi1;
+         data_sent.mosi2 = vif.smon_cb.mosi2;
+         data_sent.mosi3 = vif.smon_cb.mosi3;
+
+         data_sent.miso0 =vif.smon_cb.miso0;  
+         data_sent.miso1 =vif.smon_cb.miso1; 
+         data_sent.miso2 =vif.smon_cb.miso2; 
+         data_sent.miso3 =vif.smon_cb.miso3; */
+       end
+   join
+//implementing write method 
+ monitor_port.write(data_sent);
+
+  // `uvm_info("SLAVE_monitor",$sformatf("printing from monitor \n %s"),UVM_LOW) 
+
+endtask:collect_data
+//----------------------------------------------------------------------------------------------
+`endif
 
 
 
-`uvm_info("SLAVE_monitor",$sformatf("printing from monitor \n %s", xtn.sprint()),UVM_LOW) 
-
-		endtask
 
 
     
-//4) Close of Include guard*/
-`endif
+
