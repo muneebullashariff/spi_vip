@@ -24,12 +24,6 @@
 `ifndef _INTERFACE_INCLUDED_
 `define _INTERFACE_INCLUDED_
 
- 
-
-
-
-
-
 //-----------------------------------------------------------------------------
 // Class:Interface
 // Description of the class
@@ -40,11 +34,10 @@ interface spi_if;
 // signals
   logic reset;
   
-  
    logic ss_n;   
    logic sclk; 
    logic mosi;
-    logic miso;
+   logic miso;
 
 /*   
 
@@ -112,11 +105,12 @@ default input #1 output #0 ;
 endclocking*/
 
 //declaring modports for master driver and monitor
-modport MDR_CB (input sclk,ss_n,mosi,output miso);
+modport MDR_CB (output sclk,ss_n,mosi, input miso);
 modport MMON_CB (input sclk,ss_n,mosi,miso);
+
 //declaring modports for slave driver and monitor
-modport SDR_CB (input miso,output sclk,ss_n,mosi);
+modport SDR_CB (output miso,input sclk,ss_n,mosi);
 modport SMON_CB (input sclk,ss_n,mosi,miso);
 
 
-endinterface
+endinterface: spi_if 

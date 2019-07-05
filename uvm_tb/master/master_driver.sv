@@ -102,35 +102,52 @@ endfunction:connect_phase
 
 
 //-------------------------------------------------------------------------------
-
 task master_driver::run_phase(uvm_phase phase);
-	
 
-      	
-	forever
+  // TODO: Need to have the reset task to reset the
+  // required signals
+  //fork
+  //  reset_task();
+  //join_none
 
-	     begin
+  // resetting the values - temporarily
+  vif.ss_n <= 1;
+  vif.sclk <= 0;
+  vif.mosi <= 0;
+
+	forever begin
 		seq_item_port.get_next_item(req);
-		  clock_gen(req);
-                  data_trans(req);
+    drive_to_dut(req);
 		seq_item_port.item_done();
-	     end
+	end
 endtask:run_phase
+
+task master_driver::drive_to_dut(master_xtn req);
+  // Asserting the chip-select 
+  vif.ss_n <= 1'b0;
+  
+  // TODO: Need to have the delay parameterized
+  #5; // half-clock cycle of spi
+
+  fork
+    clock_gen();
+    data_trans(req);
+  join
+endtask: drive_to_dut
 
 //-------------------------------------------------------------------------------
 //task:clock gen
 //generating the clock
 //----------- ---------------------------------------------------------------------
-task master_driver::clock_gen(master_xtn xtn);
+task master_driver::clock_gen();
 
- if(vif.ss_n<=1'b1)
- forever
-  begin
-	vif.sclk=1'b0;
-   #5;
-  vif.sclk=1'b1;
-   end
+  // Generating 8 clock pulses - for 8bits
+  for(int i=0; i<8; i++) begin
+    #5; vif.sclk <= ~vif.sclk; 
+    #5; vif.sclk <= ~vif.sclk; 
+  end
 endtask:clock_gen
+
 //--------------------------------------------------------------------------------
 //task:data_trans
 //converting transaction level to pin level
@@ -138,22 +155,39 @@ endtask:clock_gen
 //---------------------------------------------------------------------------------
 
 task master_driver::data_trans(master_xtn xtn);
-	
-       if(vif.MDR_CB.ss_n<= 1'b1)
+  // Temporary mosi data
+	bit [7:0] mosi_data;
+  bit [7:0] miso_data;
+
+  mosi_data = xtn.data_in_mosi;
+
+  //for(int i=7;i<xtn.data_in_mosi;i--) begin
+  //  xtn.data_in_mosi[7]=vif.MDR_CB.mosi;
+  //  vif.mosi <= xtn.data_in_mosi[7];  
+  //   $display("left shift operation",xtn.data_in_mosi >> 1'b1);
+  //   vif.SDR_CB.miso=xtn.data_in_mosi;
+  //  end
+      
+  fork
+    begin: MOSI
+      // mosi data driving on the interface  
+      for(int i=0; i<8; i++) begin
         @(posedge vif.sclk);
-      begin
+        vif.mosi <= mosi_data[7];  
+        mosi_data = mosi_data << 1;
+      end
+    end
+    begin: MISO
+      // miso data sampling from the interface
+      for(int i=0; i<8; i++) begin
+        @(negedge vif.sclk);
+        miso_data = miso_data << 1; 
+        miso_data[0] = vif.miso;
+      end
+    end
+  join
 
-      for(int i=7;i<xtn.data_in_mosi;i--)
-       begin
-
-          xtn.data_in_mosi[7]=vif.MDR_CB.mosi;
-           $display("left shift operation",xtn.data_in_mosi >> 1'b1);
-           vif.SDR_CB.miso=xtn.data_in_mosi;
-        end
-          
-          	
-    	`uvm_info("master_driver",$sformatf("printin from master_driver \n %s",xtn.sprint()),UVM_LOW)
-   end
+  `uvm_info("master_driver",$sformatf("printin from master_driver \n %s",xtn.sprint()),UVM_LOW)
 endtask:data_trans
 //---------------------------------------------------------------------------------
 `endif
