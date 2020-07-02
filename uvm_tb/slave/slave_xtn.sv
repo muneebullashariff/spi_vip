@@ -25,12 +25,6 @@
 `ifndef _SLAVE_XTN_INCLUDED_
 `define _SLAVE_XTN_INCLUEDE_
 
-
-
-
-
-
-
 //-----------------------------------------------------------------------------
 // Class: slave_xtn
 // Description of the class.
@@ -48,22 +42,11 @@ class slave_xtn extends uvm_sequence_item;
  bit ss_n;
  bit [1:0]cpol;
  bit [1:0]cpha;
-
- 
-  bit [7:0]data_in_mosi;
-  bit [7:0]data_in_miso;
-
+ bit [7:0]data_in_mosi;
+ bit [7:0]data_in_miso;
  bit mosi;
-/* bit mosi1;
- bit mosi2;
- bit mosi3;*/
  rand bit miso;
-/* rand bit miso1;
- rand bit miso2;
- rand bit miso3;*/
 
-
- 
 //---------------------------------------------
 // Externally defined tasks and functions
 //---------------------------------------------
@@ -97,20 +80,11 @@ function void slave_xtn::do_print(uvm_printer printer);
 
       
       printer.print_field("data_in_mosi",data_in_mosi,8,UVM_HEX);
-     printer.print_field("data_in_miso",data_in_miso,8,UVM_HEX);
+      printer.print_field("data_in_miso",data_in_miso,8,UVM_HEX);
 
 
-
-       printer.print_field( "miso",  miso, 1,UVM_DEC);
-     /*  printer.print_field( "miso1",  miso1, 1,UVM_DEC);
-       printer.print_field( "miso2",  miso2, 1,UVM_DEC);
-       printer.print_field( "miso3",  miso3, 1,UVM_DEC);*/
-
-       printer.print_field( "mosi",  mosi, 1,UVM_DEC);
-     /*  printer.print_field( "mosi1",  mosi1, 1,UVM_DEC);
-       printer.print_field( "mosi2",  mosi2, 1,UVM_DEC);
-       printer.print_field( "mosi3",  mosi3, 1,UVM_DEC);*/
-
+      printer.print_field( "miso",  miso, 1,UVM_DEC);
+      printer.print_field( "mosi",  mosi, 1,UVM_DEC);
 
    
 endfunction:do_print

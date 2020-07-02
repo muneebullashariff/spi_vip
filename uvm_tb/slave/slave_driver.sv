@@ -1,4 +1,3 @@
-//1) License copy
 //  ###########################################################################
 //
 //  Licensed to the Apache Software Foundation (ASF) under one
@@ -23,8 +22,6 @@
 `ifndef _SLAVE_DRIVER_INCLUDED_
 `define _SLAVE_DRIVER_INCLUDED_
 
-
-
 //-----------------------------------------------------------------------------
 // Class: slave_driver
 // Description of the class.
@@ -36,10 +33,10 @@ class slave_driver extends uvm_driver #(slave_xtn);
 // override in future if necessary 
  `uvm_component_utils(slave_driver)
 
-
-
 //declaring the handles of virtual interface and slave agent config 
-  virtual spi_if.SDR_MP vif;
+ //virtual spi_if.SDR_MP vif;
+  virtual spi_if vif; //changes by DG
+//  virtual interface_rtl vif;
   slave_agent_config s_cfg;
 
 //---------------------------------------------
@@ -49,7 +46,8 @@ extern function new(string name="slave_driver", uvm_component parent);
 extern function void build_phase(uvm_phase phase);
 extern function void connect_phase(uvm_phase phase);
 extern task run_phase(uvm_phase phase);
-extern task data_rec(slave_xtn xtn);
+//extern task data_rec(slave_xtn xtn);
+extern task data_rec();
 
 
 endclass: slave_driver
@@ -77,14 +75,16 @@ endfunction: new
 function void slave_driver::build_phase(uvm_phase phase);
   super.build_phase(phase);
 
-        if(!uvm_config_db #(slave_agent_config)::get(this,"","slave_agent_config",s_cfg))
-         begin
+  if(!uvm_config_db #(slave_agent_config)::get(this,"","slave_agent_config",s_cfg))
+    begin
 
 	 `uvm_fatal("CONFIG","Cannot get() s_cfg fron uvm_config_db. have you set it?")
 
-         end
+     end
 
- endfunction: build_phase
+  assert(uvm_config_db#(virtual spi_if)::get(this,"","spi_if",vif));
+
+endfunction: build_phase
 //------------------------------------------------------------------------------
 //function:connect phase
 //
@@ -100,54 +100,35 @@ endfunction:connect_phase
 //to sequence
 //------------------------------------------------------------------------------
 task slave_driver::run_phase(uvm_phase phase);
-  
-     forever
- 
+ slave_xtn req;
+
+ forever
 	 begin
 	   seq_item_port.get_next_item(req);
-	    data_rec(req);
+	    data_rec();
 	   seq_item_port.item_done();
 	end
 endtask:run_phase
+
 //------------------------------------------------------------------------------
 //task: send to dut
 //converting transaction level to pin level
-
 //-------------------------------------------------------------------------------
-
-task slave_driver::data_rec(slave_xtn xtn);
-
-
-        @(negedge vif.sclk);
-          begin
-
-      for(int i=0;i<xtn.data_in_miso;i++)
+task slave_driver::data_rec();
+  //@(negedge vif.sclk);
+     @(vif.sdr_cb);
+     begin
+      for(int i=0;i<req.data_in_miso;i++)
        begin
-
-          xtn.data_in_mosi[0]=vif.sdr_cb.miso;
-
-           $display("right shift operation",xtn.data_in_mosi << 1'b1);
-
-          vif.MDR_CB.mosi=xtn.data_in_miso;
-        end
-
-        //	vif.sdr_cb.miso0 <= xtn.miso0;
-         //	vif.sdr_cb.mosi0 <= xtn.mosi0;
-  
+       // vif.sdr_cb.mosi <= req.mosi; 
+        vif.sdr_cb.miso <= req.miso; 
+       // $display("right shift operation",vif.sdr_cb.mosi << 1'b1);
+     //   vif.sdr_cb.miso <=req.miso;
+      end
  	  end
 
-
-	`uvm_info("slave_driver",$sformatf("printin from slave_driver \n %s",xtn.sprint()),UVM_LOW)
+`uvm_info("slave_driver",$sformatf("printin from slave_driver \n %s",req.sprint()),UVM_LOW)
 endtask:data_rec
 //----------------------------------------------------------------------------------------
 
 `endif
-
-
-	
-
-
-	
-
-	
-

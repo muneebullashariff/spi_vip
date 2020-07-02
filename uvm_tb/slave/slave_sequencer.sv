@@ -22,7 +22,6 @@
 `ifndef _SLAVE_SEQUENCER_INCLUDED_
 `define _SLAVE_SEQUENCER_INCLUDED_
 
-
 //-----------------------------------------------------------------------------
 // Class: SLAVE_SEQUENCER
 // Description of the class.

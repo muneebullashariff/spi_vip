@@ -22,8 +22,6 @@
 `ifndef _SLAVE_AGENT_INCLUDED_
 `define _SLAVE_AGENT_INCLUDED_
 
-
-
 //-----------------------------------------------------------------------------
 // Class: SLAVE_AGENT
 // Description of the class.
@@ -33,8 +31,6 @@ class slave_agent extends uvm_agent;
 
 //register with factory so can use create uvm_method 
 //and override in future if necessary 
-
-
 `uvm_component_utils(slave_agent)
 
 //declaring handles for agent config driver monitor and sequencer
@@ -42,9 +38,10 @@ class slave_agent extends uvm_agent;
 slave_agent_config s_cfg;
 slave_driver s_drv;
 slave_monitor s_mon;
-slave_sequencer s_seqrh;
+slave_sequencer s_seqr;
 
-
+//declare analysis port
+uvm_analysis_port#(slave_xtn) smon_ap; //DG
   
 //---------------------------------------------
 // Externally defined tasks and functions
@@ -83,20 +80,21 @@ function void slave_agent::build_phase(uvm_phase phase);
           begin
            `uvm_fatal("config","cannotget()s_cfg from uvm_config_db.have you set it?.")
           end
+
 //creating slave monitor
 s_mon=slave_monitor::type_id::create("s_mon",this);
-      s_cfg=new();
+//      s_cfg=new();
 
-//If the master agent is made active in master_configuration
+//If the slave agent is made active in slave_configuration
 // class create driver and sequence
 if(s_cfg.is_active==UVM_ACTIVE)
  begin
    s_drv=slave_driver::type_id::create("s_drv",this);
-   s_seqrh=slave_sequencer::type_id::create("s_seqrh",this);
+   s_seqr=slave_sequencer::type_id::create("s_seqr",this);
  end
-
      
 endfunction: build_phase  
+
 //-----------------------------------------------------------------------------
 // Function: connect_phase
 // Creates the required ports
@@ -106,10 +104,16 @@ endfunction: build_phase
 //-----------------------------------------------------------------------------
 
 function void slave_agent::connect_phase(uvm_phase phase);
-	if(s_cfg.is_active==UVM_ACTIVE)
+super.connect_phase(phase);
+
+s_mon.vif=s_cfg.vif;
+smon_ap=s_mon.smon_ap;
+
+if(s_cfg.is_active==UVM_ACTIVE)
          begin
-       	  s_drv.seq_item_port.connect(s_seqrh.seq_item_export);
-         end
+       	  s_drv.seq_item_port.connect(s_seqr.seq_item_export);
+          s_drv.vif=s_cfg.vif;
+        end
 endfunction
 //------------------------------------------------------------------------------
 `endif
