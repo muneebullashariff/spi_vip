@@ -22,7 +22,6 @@
 `ifndef _SLAVE_AGENT_CONFIG_INCLUDED_
 `define _SLAVE_AGENT_CONFIG_INCLUDED_
 
-
 //-----------------------------------------------------------------------------
 // Class: SLAVE_AGENT_CONFIG
 // Description of the class.
@@ -36,6 +35,7 @@ class slave_agent_config extends uvm_object;
 
 //declare handles for virtual interface
    virtual spi_if vif;
+ //virtual interface_rtl vif;
 
 //declaring agent is active or passive
   uvm_active_passive_enum is_active= UVM_ACTIVE;
@@ -46,8 +46,6 @@ class slave_agent_config extends uvm_object;
 extern function new(string name="slave_agent_config"); 
 
 endclass:slave_agent_config
-
-
 
  
 //-----------------------------------------------------------------------------

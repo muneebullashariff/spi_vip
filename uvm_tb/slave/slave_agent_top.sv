@@ -22,7 +22,7 @@
 `ifndef _SLAVE_AGENT_TOP_INCLUDED_
 `define _SLAVE_AGENT_TOP_INCLUDED_
 
-
+import uvm_pkg::*;
 
 //-----------------------------------------------------------------------------
 // Class: SLAVE_AGENT_TOP

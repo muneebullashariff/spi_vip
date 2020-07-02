@@ -22,7 +22,6 @@
 `ifndef _SLAVE_SEQUENCE_INCLUDED_
 `define _SLAVE_SEQUENCE_INCLUDED_
 
-
 //-----------------------------------------------------------------------------
 // Class:SLAVE_sequence
 //------------------------------------------------------------------------------
@@ -30,7 +29,6 @@ class slave_sequence extends uvm_sequence #(slave_xtn);
 
 //register with factory so can use create uvm_method
 // and override in future if necessary 
-	
  `uvm_object_utils(slave_sequence)
 
 
@@ -93,18 +91,15 @@ endfunction:new
 //creating request which is will be coming from driver
 //-----------------------------------------------------------------------------
 task sseq1::body();
-
-	begin
-
-        req=slave_xtn::type_id::create("req");
-       	repeat(4)
-	     begin
+ req=slave_xtn::type_id::create("req");
+   
+ repeat(4)
+   begin
 		start_item(req);
-		assert(req.randomize () with {cpol==0;cpha==0;data_in_miso==8'b10010010;});
-                finish_item(req);
-             
-	     end
-	end
+		assert(req.randomize() with {cpol==0;cpha==0;data_in_miso==8'b10010010;});
+    finish_item(req);
+   end
+
 endtask:body
 //------------------------------------------------------------------------------
 
