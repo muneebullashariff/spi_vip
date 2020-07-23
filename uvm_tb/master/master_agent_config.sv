@@ -22,6 +22,12 @@
 `ifndef _MASTER_AGENT_CONFIG_INCLUDED_
 `define _MASTER_AGENT_CONFIG_INCLUDED_
 
+///adding my line
+import uvm_pkg::*; //v
+
+
+//`include "uvm_macros.svh"
+
 
 //-----------------------------------------------------------------------------
 // Class: master_agent_config
@@ -29,6 +35,9 @@
 
 //------------------------------------------------------------------------------
 class master_agent_config extends uvm_object;
+
+
+
 
 //register with factory so can use create uvm_method 
 //and override in future if necessary 

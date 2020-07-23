@@ -31,6 +31,9 @@
 //uvm_driver is a parameterized class and it is parameterized with the type of the request 
 //sequence_item and the type of the response sequence_item 
 //------------------------------------------------------------------------------
+
+//`define vif m_vif.MDR_CB
+
 class master_driver extends uvm_driver #(master_xtn);
 
 //register with factory so can use create uvm_method and
@@ -40,7 +43,9 @@ class master_driver extends uvm_driver #(master_xtn);
 
 //declaring virtual interface
  virtual spi_if.MDR_CB vif;
-
+  
+ //  virtual spi_if m_vif; //v
+ 
  
 //declaring handle for master agent config class 
  master_agent_config m_cfg;
@@ -52,7 +57,9 @@ class master_driver extends uvm_driver #(master_xtn);
  extern function void build_phase(uvm_phase phase);
  extern function void connect_phase(uvm_phase phase);
  extern virtual task run_phase(uvm_phase phase);
- extern virtual task clock_gen(master_xtn xtn);
+// extern virtual task clock_gen(master_xtn xtn);
+  extern virtual task clock_gen();//v
+  extern virtual task drive_to_dut(master_xtn req);//v
  extern virtual task data_trans(master_xtn xtn);
 
 endclass: master_driver
@@ -123,6 +130,7 @@ task master_driver::run_phase(uvm_phase phase);
 endtask:run_phase
 
 task master_driver::drive_to_dut(master_xtn req);
+//task drive_to_dut(master_xtn req); //v
   // Asserting the chip-select 
   vif.ss_n <= 1'b0;
   
@@ -140,11 +148,13 @@ endtask: drive_to_dut
 //generating the clock
 //----------- ---------------------------------------------------------------------
 task master_driver::clock_gen();
+//task clock_gen(); //v
+
 
   // Generating 8 clock pulses - for 8bits
   for(int i=0; i<8; i++) begin
-    #5; vif.sclk <= ~vif.sclk; 
-    #5; vif.sclk <= ~vif.sclk; 
+    #5; vif.sclk <= ~(vif.sclk); 
+    #5; vif.sclk <= ~(vif.sclk); 
   end
 endtask:clock_gen
 
@@ -155,7 +165,9 @@ endtask:clock_gen
 //---------------------------------------------------------------------------------
 
 task master_driver::data_trans(master_xtn xtn);
-  // Temporary mosi data
+//task data_trans(master_xtn xtn); //v
+ 
+ // Temporary mosi data
 	bit [7:0] mosi_data;
   bit [7:0] miso_data;
 
