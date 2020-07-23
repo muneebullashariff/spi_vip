@@ -113,4 +113,5 @@ modport SDR_CB (output miso,input sclk,ss_n,mosi);
 modport SMON_CB (input sclk,ss_n,mosi,miso);
 
 
-endinterface: spi_if 
+endinterface: spi_if
+` endif //v

@@ -24,7 +24,7 @@
 `ifndef _ENV_CONFIG_INCLUDED_
 `define _ENV_CONFIG_INCLUDED_
 
-
+import uvm_pkg::*; //v
  
 
 
@@ -47,7 +47,7 @@ bit has_stop=1;
 
 bit has_virtual_sequencer=1;
 master_agent_config  m_cfg[]; 
-slave_agent_config  s_cfg[];
+// slave_agent_config  s_cfg[];
 
 int no_of_magent=1;
 int no_of_sagent=1;

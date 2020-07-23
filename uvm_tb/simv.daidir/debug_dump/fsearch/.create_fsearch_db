@@ -1,0 +1,9 @@
+#!/bin/sh -h 
+PYTHONHOME=/pdtools/synosys/installed_tools/vcs/P-2019.06-SP2-1/etc/search/pyh
+export PYTHONHOME
+PYTHONPATH=/pdtools/synosys/installed_tools/vcs/P-2019.06-SP2-1/linux64/lib/pylib27
+export PYTHONPATH
+LD_LIBRARY_PATH=/pdtools/synosys/installed_tools/vcs/P-2019.06-SP2-1/linux64/lib:/pdtools/synosys/installed_tools/vcs/P-2019.06-SP2-1/linux64/lib/pylib27
+export LD_LIBRARY_PATH
+/pdtools/synosys/installed_tools/vcs/P-2019.06-SP2-1/linux64/bin/vcsfind_create_index.exe  -z  "/pdtools/work_area/frontend/veereshk/spi_vip/uvm_tb/simv.daidir/debug_dump/fsearch/./idents_MjgrQB.xml.gz" "/pdtools/work_area/frontend/veereshk/spi_vip/uvm_tb/simv.daidir/debug_dump/fsearch/./idents_tapi.xml.gz" -o "/pdtools/work_area/frontend/veereshk/spi_vip/uvm_tb/simv.daidir/debug_dump/fsearch/fsearch.db_tmp"
+\mv "/pdtools/work_area/frontend/veereshk/spi_vip/uvm_tb/simv.daidir/debug_dump/fsearch/fsearch.db_tmp" "/pdtools/work_area/frontend/veereshk/spi_vip/uvm_tb/simv.daidir/debug_dump/fsearch/fsearch.db"
